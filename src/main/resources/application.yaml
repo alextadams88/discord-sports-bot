@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: discord-sports-bot
+discord:
+  api-token: you_didnt_really_think_i_would_commit_my_api_token_did_you
+  #todo: use env var for this and then regenerate token once I have something more secure
