@@ -39,6 +39,11 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
         <!-- shouldn't need this dependency but ok -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

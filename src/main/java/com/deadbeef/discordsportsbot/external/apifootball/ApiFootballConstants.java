@@ -23,4 +23,13 @@ public class ApiFootballConstants {
         }
 
     }
+
+    public static class PlayersConstants {
+        public static final String PLAYERS_PATH = API_FOOTBALL_BASE_URL + "/players";
+        public static final String PLAYER_ID = "id";
+        public static final String LEAGUE = "league";
+        public static final String SEASON = "season";
+        public static final String SEARCH = "search";
+        public static final String PAGE = "page";
+    }
 }

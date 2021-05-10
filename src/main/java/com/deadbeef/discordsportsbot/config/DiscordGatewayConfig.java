@@ -1,9 +1,12 @@
 package com.deadbeef.discordsportsbot.config;
 
 import com.deadbeef.discordsportsbot.listeners.EventListener;
+import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.Event;
+import discord4j.rest.service.ChannelService;
+import discord4j.rest.service.GuildService;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +31,21 @@ public class DiscordGatewayConfig {
         }
 
         return client;
+    }
+
+    @Bean
+    public DiscordClient discordClient(GatewayDiscordClient gatewayDiscordClient){
+        return gatewayDiscordClient.rest();
+    }
+
+    @Bean
+    public GuildService guildService(DiscordClient discordClient){
+        return discordClient.getGuildService();
+    }
+
+    @Bean
+    public ChannelService channelService(DiscordClient discordClient){
+        return discordClient.getChannelService();
     }
 
 }
