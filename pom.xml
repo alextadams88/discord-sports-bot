@@ -20,6 +20,7 @@
     <properties>
         <java.version>11</java.version>
         <discord4j.version>3.1.5</discord4j.version>
+        <unirest.version>3.11.11</unirest.version>
     </properties>
 
     <dependencies>
@@ -42,6 +43,17 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>${unirest.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
         </dependency>
 
         <dependency>
