@@ -3,6 +3,7 @@ package com.deadbeef.discordsportsbot;
 import com.deadbeef.discordsportsbot.external.apifootball.ApiFootballService;
 import com.deadbeef.discordsportsbot.service.DiscordMessageService;
 import com.deadbeef.discordsportsbot.service.EventsService;
+import com.deadbeef.discordsportsbot.service.FixturesService;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ class DiscordSportsBotApplicationTests {
 
     @Autowired
     EventsService eventsService;
+
+    @Autowired
+    FixturesService fixturesService;
 
     @Test
     void contextLoads() {
@@ -41,5 +45,10 @@ class DiscordSportsBotApplicationTests {
         var fixture = fixtures.stream().filter(fixtureResponse -> fixtureResponse.getFixture().getId().equals(695187L)).findFirst().get();
         var events = eventsService.fetchEvents(695187L, 2021);
         discordMessageService.emitEvents(events, fixture);
+    }
+
+    @Test
+    public void testFetchFixtures() {
+        fixturesService.testFetchFixtures(LocalDate.of(2021, 5, 9));
     }
 }

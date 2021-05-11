@@ -1,6 +1,10 @@
 spring:
   application:
     name: discord-sports-bot
+  cache:
+    cache-names: api-football-players, discord-message-channel
+    caffeine:
+      spec: maximumSize=100,expireAfterWrite=2h
 discord:
   api-token: token-goes-here
   #todo: use env var for this and then regenerate token once I have something more secure

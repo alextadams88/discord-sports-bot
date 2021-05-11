@@ -24,6 +24,7 @@ import kong.unirest.json.JSONObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,6 +49,8 @@ public class ApiFootballService {
             .queryString(LEAGUE, leagueId)
             .queryString(SEASON, season);
 
+        log.info("Sending getFixtures request to API Football service. Date=[{}] League=[{}] Season=[{}]", date, leagueId, season);
+
         var response = sendRequest(request);
 
         try{
@@ -62,14 +65,16 @@ public class ApiFootballService {
             return fixtures;
         }
         catch (JSONException ex){
-            log.error("", ex);
-            throw new RuntimeException("help");
+            log.error("Error parsing Fixtures response from API Football service. Response=[{}] ", response.toString());
+            throw new RuntimeException(ex);
         }
     }
 
     public List<Event> getEvents(Long fixtureId){
         var request = buildRequest(EVENTS_PATH)
             .queryString(FIXTURE_ID, fixtureId);
+
+        log.info("Sending getEvents request to API Football service. FixtureID=[{}]", fixtureId);
 
         var response = sendRequest(request);
 
@@ -83,35 +88,38 @@ public class ApiFootballService {
             return events;
         }
         catch (JSONException ex){
-            log.error("", ex);
-            throw new RuntimeException("help");
+            log.error("Error parsing Events response from API Football service. Response=[{}] ", response.toString());
+            throw new RuntimeException(ex);
         }
     }
 
+    @Cacheable("api-football-players")
     public Player getPlayer(Long playerId, Integer season){
         var request = buildRequest(PLAYERS_PATH)
             .queryString(PLAYER_ID, playerId)
             .queryString(SEASON, season);
+
+        log.info("Sending getPlayer request to API Football service. PlayerID=[{}] Season=[{}]", playerId, season);
 
         var response = sendRequest(request);
 
         try {
             var playerJson = response.getObject().getJSONArray("response");
             if (playerJson.length() != 1){
-                log.error("OH NOES");
+                log.error("More than one player recieved in player response! Response=[{}]", response.toString());
             }
             var playerObject = playerJson.getJSONObject(0);
             if (playerObject.has("player")){
                 return convert(playerObject.getJSONObject("player"), Player.class);
             }
             else {
-                log.error("OH NOES!!!");
-                return null;
+                log.error("Unexpected Player response. Response=[{}]", response.toString());
+                throw new RuntimeException("Unexpected Player response.");
             }
         }
         catch (JSONException ex){
-            log.error("", ex);
-            throw new RuntimeException("help");
+            log.error("Error parsing Player response from API Football service. Response=[{}] ", response.toString());
+            throw new RuntimeException(ex);
         }
 
     }
@@ -134,8 +142,8 @@ public class ApiFootballService {
         try {
             JSONArray errorsArray = responseJson.getObject().getJSONArray("errors");
             if (!errorsArray.isEmpty()){
-                log.error(errorsArray.toString());
-                throw new RuntimeException("help");
+                log.error("Error in API-Football response. Error=[{}}", errorsArray.toString());
+                throw new RuntimeException("Error in API-Football response.");
             }
         }
         catch (JSONException ex){
@@ -144,8 +152,8 @@ public class ApiFootballService {
         try {
             JSONObject errors = responseJson.getObject().getJSONObject("errors");
             if (!errors.isEmpty()){
-                log.error(errors.toString());
-                throw new RuntimeException("help");
+                log.error("Error in API-Football response. Error=[{}}", errors.toString());
+                throw new RuntimeException("Error in API-Football response.");
             }
         }
         catch (JSONException ex){
