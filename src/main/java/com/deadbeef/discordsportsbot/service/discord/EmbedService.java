@@ -34,6 +34,8 @@ public class EmbedService {
     //TODO: figure out the actual Unix Timestamp of the events by adding the elapsed time on the
     // event to the start time of the match and then send that as spec.setTimestamp
 
+
+    //TODO: clean this up!
     public void createEventEmbed(EmbedCreateSpec spec, Event event, FixtureResponse fixture){
 
         spec.setAuthor(getMatchString(fixture), "", "");

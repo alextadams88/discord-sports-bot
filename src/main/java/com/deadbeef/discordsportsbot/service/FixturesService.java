@@ -32,16 +32,16 @@ public class FixturesService {
     //this will be so that I can poll the fixtures periodically throughout the day and handle if the start time changes or something
 
     private Map<Long, List<FixtureResponse>> leagueIdToDailyFixturesMap = new HashMap<>();
-
-    @PostConstruct
-    private void populateFixturesMap(){
-        fetchFixtures(LocalDate.now());
-    }
-
-    @Scheduled(cron = "0 0 0 * * *")
-    public void dailyFixturesFetch(){
-        fetchFixtures(LocalDate.now());
-    }
+//
+//    @PostConstruct
+//    private void populateFixturesMap(){
+//        fetchFixtures(LocalDate.now());
+//    }
+//
+//    @Scheduled(cron = "0 0 0 * * *")
+//    public void dailyFixturesFetch(){
+//        fetchFixtures(LocalDate.now());
+//    }
 
     //for testing only
     public void testFetchFixtures(LocalDate date){
@@ -59,6 +59,7 @@ public class FixturesService {
                 task.setFixture(fixture);
                 taskScheduler.schedule(
                     task,
+//                    Instant.ofEpochSecond(fixture.getFixture().getTimestamp())
                     Instant.now().plusSeconds(5)
                 );
             });

@@ -40,8 +40,10 @@ class DiscordSportsBotApplicationTests {
     }
 
     @Test
+    //TODO: need to figure out a way to make this test block to wait until all the monos are complete.....otherwise it just terminates
     public void testSendEvents() {
-        var fixtures = apiFootballService.getFixtures(LocalDate.now().minusDays(1), 253L, 2021);
+//        var fixtures = apiFootballService.getFixtures(LocalDate.now().minusDays(1), 253L, 2021);
+        var fixtures = apiFootballService.getFixtures(LocalDate.of(2021, 5, 9), 253L, 2021);
         var fixture = fixtures.stream().filter(fixtureResponse -> fixtureResponse.getFixture().getId().equals(695187L)).findFirst().get();
         var events = eventsService.fetchEvents(695187L, 2021);
         discordMessageService.emitEvents(events, fixture);

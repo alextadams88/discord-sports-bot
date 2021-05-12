@@ -70,6 +70,43 @@ public class ApiFootballService {
         }
     }
 
+    public FixtureResponse getFixtureById(Long fixtureId){
+        var request = buildRequest(FIXTURES_PATH)
+            .queryString(ID, fixtureId);
+
+        log.info("Sending getFixtureByID request to API Football service. FixtureID=[{}]", fixtureId);
+
+        var result = sendFixturesRequest(request);
+        if (result.size() < 1){
+            log.error("No fixture received from getFixtureById request. FixtureID=[{}]", fixtureId);
+        }
+        if (result.size() > 1){
+            log.error("More than one fixture received from getFixtureById request! Results=[{}]", result);
+        }
+        return result.get(0);
+    }
+
+    public List<FixtureResponse> sendFixturesRequest(HttpRequest request){
+
+        var response = sendRequest(request);
+
+        try{
+            var fixturesJson = response.getObject().getJSONArray("response");
+
+            List<FixtureResponse> fixtures = new ArrayList<>();
+            for (int i = 0; i < fixturesJson.length(); i++){
+                var result = convert(fixturesJson.getJSONObject(i), FixtureResponse.class);
+                fixtures.add(result);
+            }
+
+            return fixtures;
+        }
+        catch (JSONException ex){
+            log.error("Error parsing Fixtures response from API Football service. Response=[{}] ", response.toString());
+            throw new RuntimeException(ex);
+        }
+    }
+
     public List<Event> getEvents(Long fixtureId){
         var request = buildRequest(EVENTS_PATH)
             .queryString(FIXTURE_ID, fixtureId);
