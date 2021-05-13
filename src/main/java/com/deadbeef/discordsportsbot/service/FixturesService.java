@@ -32,16 +32,19 @@ public class FixturesService {
     //this will be so that I can poll the fixtures periodically throughout the day and handle if the start time changes or something
 
     private Map<Long, List<FixtureResponse>> leagueIdToDailyFixturesMap = new HashMap<>();
-//
-//    @PostConstruct
-//    private void populateFixturesMap(){
-//        fetchFixtures(LocalDate.now());
-//    }
-//
-//    @Scheduled(cron = "0 0 0 * * *")
-//    public void dailyFixturesFetch(){
-//        fetchFixtures(LocalDate.now());
-//    }
+
+    @PostConstruct
+    private void populateFixturesMap(){
+        fetchFixtures(LocalDate.now());
+        fetchFixtures(LocalDate.now().plusDays(1));
+    }
+
+    //TODO fix the issue with UTC
+    @Scheduled(cron = "0 0 0 * * *")
+    public void dailyFixturesFetch(){
+        fetchFixtures(LocalDate.now());
+        fetchFixtures(LocalDate.now().plusDays(1));
+    }
 
     //for testing only
     public void testFetchFixtures(LocalDate date){
@@ -57,11 +60,18 @@ public class FixturesService {
             mlsFixtures.forEach(fixture -> {
                 var task = applicationContext.getBean("fixturePollingEvent", EventTask.class);
                 task.setFixture(fixture);
-                taskScheduler.schedule(
-                    task,
-//                    Instant.ofEpochSecond(fixture.getFixture().getTimestamp())
-                    Instant.now().plusSeconds(5)
-                );
+                if (fixture.getFixture().getTimestamp() < Instant.now().getEpochSecond()){
+                    taskScheduler.schedule(
+                        task,
+                        Instant.now().plusSeconds(5)
+                    );
+                }
+                else {
+                    taskScheduler.schedule(
+                        task,
+                        Instant.ofEpochSecond(fixture.getFixture().getTimestamp())
+                    );
+                }
             });
         }
         catch (RuntimeException ex){

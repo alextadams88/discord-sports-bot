@@ -41,11 +41,12 @@ public class EventTask implements Runnable{
             //I need a way to figure out if I need to update previous events. The Events in this API don't have unique IDs so no way to uniquely identify them.
             //For now I'll just have to assume that Events will always come in totally complete, and never get updated. If this is not the case then something will have to change.
             //I'll find out when I do a live test this weekend.
-            newEvents.stream().filter(events::contains).forEach(event -> {
+            newEvents.stream().filter(event -> !events.contains(event)).forEach(event -> {
                 log.info("Emitting new event. Event=[{}]", event);
+//                updatePlayers(event);
                 discordMessageService.emitEvent(event, fixture, eventToMessageMap);
             });
-            events.stream().filter(newEvents::contains).forEach(removedEvent -> {
+            events.stream().filter(event -> !newEvents.contains(event)).forEach(removedEvent -> {
                 log.info("Removing event, it is not present in updated Events list. Event=[{}]", removedEvent);
                 if (eventToMessageMap.containsKey(removedEvent)){
                     discordMessageService.removeEventDueToVAR(eventToMessageMap.get(removedEvent));
@@ -63,6 +64,21 @@ public class EventTask implements Runnable{
 
     }
 
+    private void updatePlayers(Event event){
+        if (event.getPlayer() != null && event.getPlayer().getId() != null){
+            var player = footballService.getPlayer(event.getPlayer().getId(), 2021);
+            if (Objects.nonNull(player)){
+                event.setPlayer(player);
+            }
+        }
+        if (event.getAssist() != null && event.getAssist().getId() != null){
+            var assister = footballService.getPlayer(event.getAssist().getId(), 2021);
+            if (Objects.nonNull(assister)){
+                event.setAssist(assister);
+            }
+        }
+    }
+
     private boolean gameIsOver(Fixture fixture){
         //TODO: we need better logic here to handle special cases, such as:
         //1. when halftime starts, give the endpoint a 15 minute break
@@ -76,12 +92,12 @@ public class EventTask implements Runnable{
             case "ET":
             case "P":
             case "BT":
+            case "INT": //weather delay
                 return false;
             case "FT":
             case "AET":
             case "PEN":
             case "SUSP":
-            case "INT":
             case "PST":
             case "CANC":
             case "ABD":

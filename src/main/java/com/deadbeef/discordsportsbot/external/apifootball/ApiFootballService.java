@@ -142,6 +142,10 @@ public class ApiFootballService {
 
         try {
             var playerJson = response.getObject().getJSONArray("response");
+            if (playerJson.length() < 1){
+                log.error("No player recieved in player response! Response=[{}]", response.toString());
+                return null;
+            }
             if (playerJson.length() != 1){
                 log.error("More than one player recieved in player response! Response=[{}]", response.toString());
             }

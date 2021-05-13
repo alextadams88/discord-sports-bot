@@ -65,6 +65,9 @@ public class EmbedService {
             if (!ObjectUtils.isEmpty(event.getPlayer().getPhoto())){
                 spec.setImage(event.getPlayer().getPhoto());
             }
+            else if (Objects.nonNull(event.getPlayer().getId())){
+                spec.setImage("https://media.api-sports.io/football/players/" + event.getPlayer().getId() + ".png");
+            }
         }
         if (Objects.nonNull(event.getAssist()) && !ObjectUtils.isEmpty(event.getAssist().getName())){
             spec.addField(event.getAssist().getName(), "Assisted by",true);
@@ -91,6 +94,9 @@ public class EmbedService {
             if (!ObjectUtils.isEmpty(event.getPlayer().getPhoto())){
                 spec.setImage(event.getPlayer().getPhoto());
             }
+            else if (Objects.nonNull(event.getPlayer().getId())){
+                spec.setImage("https://media.api-sports.io/football/players/" + event.getPlayer().getId() + ".png");
+            }
         }
         if (!ObjectUtils.isEmpty(event.getComments())){
             spec.addField("Reason:", event.getComments(), true);
@@ -105,6 +111,9 @@ public class EmbedService {
             spec.addField("In:", event.getPlayer().getName(), true);
             if (!ObjectUtils.isEmpty(event.getPlayer().getPhoto())){
                 spec.setImage(event.getPlayer().getPhoto());
+            }
+            else if (Objects.nonNull(event.getPlayer().getId())){
+                spec.setImage("https://media.api-sports.io/football/players/" + event.getPlayer().getId() + ".png");
             }
         }
         if (Objects.nonNull(event.getAssist()) && !ObjectUtils.isEmpty(event.getAssist().getName())){
